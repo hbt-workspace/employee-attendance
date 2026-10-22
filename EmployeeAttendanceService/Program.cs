@@ -1,3 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-Console.ReadLine();
+﻿using EmployeeAttendanceService.Services;
+
+#region Application Entry Point
+
+// Initialize the attendance processing service.
+var attendanceService = new AttendanceProcessingService();
+
+// Execute the attendance workflow.
+await attendanceService.RunAsync();
+
+#endregion
