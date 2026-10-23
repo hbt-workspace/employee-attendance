@@ -29,33 +29,31 @@ public class AttendanceProcessingService
                 throw new InvalidOperationException("Unable to connect to the attendance database.");
             }
 
-            // Find the active employee matching the Windows username.
-            var user = await dbContext.Users
-                .FirstOrDefaultAsync(u => u.UserName == windowsUserName &&
-                    u.IsActive &&
-                    !u.IsDeleted);
+            // Get or create the current Windows user.
+            var userService = new UserService();
+            var user = await userService.GetOrCreateUserAsync();
 
-            // Stop if the employee is not registered or active.
-            if (user == null)
+            // Stop if the user account is inactive.
+            if (!user.IsActive)
             {
-                throw new InvalidOperationException($"No active employee is registered for Windows user " + $"'{windowsUserName}'.");
+                throw new InvalidOperationException(
+                    $"The account for '{user.UserName}' is inactive.");
             }
 
             // Get the current local date and time.
             DateTime currentDateTime = DateTime.Now;
-            DateTime startOfDay = currentDateTime.Date;
-            DateTime startOfNextDay = startOfDay.AddDays(1);
+            //DateTime startOfDay = currentDateTime.Date;
+            //DateTime startOfNextDay = startOfDay.AddDays(1);
 
             // Check whether attendance already exists today.
             bool attendanceExists = await dbContext.Attendances
                 .AnyAsync(a => a.UserId == user.Id && !a.IsDeleted &&
-                    a.CreatedOn >= startOfDay &&
-                    a.CreatedOn < startOfNextDay);
+                    a.CreatedOn.Date == currentDateTime.Date);
 
             if (attendanceExists)
             {
                 FileLoggerHelper.LogInformation($"Attendance already exists for user {user.UserName} " +
-                    $"on {startOfDay:yyyy-MM-dd}.");
+                    $"on {currentDateTime:yyyy-MM-dd}.");
                 return;
             }
 
@@ -77,7 +75,7 @@ public class AttendanceProcessingService
 
             // Log successful attendance creation.
             FileLoggerHelper.LogInformation($"Attendance marked for user {user.UserName} " +
-                $"({computerName}), on {startOfDay:yyyy-MM-dd}.");
+                $"({computerName}), on {currentDateTime:yyyy-MM-dd}.");
 
         }
         catch (Exception ex)

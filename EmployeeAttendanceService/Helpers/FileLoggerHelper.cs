@@ -6,7 +6,8 @@ public static class FileLoggerHelper
     #region Fields
 
     // Store the log file beside the application.
-    private static readonly string LogFilePath = Path.Combine(AppContext.BaseDirectory, "AttendanceService.log");
+    private static readonly string LogFileDirectory = AppContext.BaseDirectory+"\\logs";
+    private static readonly string LogFilePath = Path.Combine(LogFileDirectory, "AttendanceService.log");
 
     #endregion
 
@@ -31,6 +32,11 @@ public static class FileLoggerHelper
     // Append a timestamped message to the log file.
     private static void WriteLog(string level, string message)
     {
+        if (!Directory.Exists(LogFileDirectory))
+        {
+            Directory.CreateDirectory(LogFileDirectory);
+        }
+        
         string logMessage =
             $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} " +
             $"[{level}] {message}{Environment.NewLine}";
