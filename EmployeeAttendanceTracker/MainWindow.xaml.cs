@@ -13,8 +13,8 @@ namespace EmployeeAttendanceTracker;
 
 public partial class MainWindow : Window
 {
-
     #region Fields 
+
     private readonly ObservableCollection<AttendanceRowViewModel> _attendance = new();
     private readonly ObservableCollection<EmployeeRowViewModel> _employees = new();
     private ICollectionView _attendanceView = null!;
@@ -27,6 +27,9 @@ public partial class MainWindow : Window
     private readonly ObservableCollection<AttendanceRowViewModel> _historyAttendance = new();
     private ICollectionView _historyView = null!;
 
+    private readonly ObservableCollection<AttendanceSummaryRowViewModel> _attendanceReport = new();
+    private readonly List<AttendanceRowViewModel> _allReportRecords = new();
+    private ICollectionView _attendanceReportView = null!;
 
     #endregion
 
@@ -43,6 +46,10 @@ public partial class MainWindow : Window
         _attendanceView = CollectionViewSource.GetDefaultView(_attendance);
         _employeesView = CollectionViewSource.GetDefaultView(_employees);
         _historyView = CollectionViewSource.GetDefaultView(_historyAttendance);
+
+        _attendanceReportView = CollectionViewSource.GetDefaultView(_attendanceReport);
+        _attendanceReportView.Filter = FilterAttendanceReport;
+        AttendanceReportGrid.ItemsSource = _attendanceReportView;
 
         _attendanceView.Filter = FilterDashboardAttendance;
         _employeesView.Filter = FilterEmployees;
@@ -83,6 +90,7 @@ public partial class MainWindow : Window
     #endregion
 
     #region Data Loading Methods
+    
     private async Task LoadDataAsync()
     {
         try
@@ -107,6 +115,13 @@ public partial class MainWindow : Window
             }
 
             await LoadHistoryAsync();
+
+            var reportRecords = await _attendanceService.GetAllAttendanceRecordsAsync();
+
+            _allReportRecords.Clear();
+            _allReportRecords.AddRange(reportRecords);
+
+            UpdateAttendanceReport();
 
             TotalEmployeesText.Text = dashboardData.TotalEmployees.ToString();
             PresentTodayText.Text = dashboardData.PresentToday.ToString();
@@ -181,9 +196,26 @@ public partial class MainWindow : Window
         return _filteringService.FilterEmployee(employee, SearchTextBox.Text);
     }
 
+    private bool FilterAttendanceReport(object obj)
+    {
+        if (obj is not AttendanceSummaryRowViewModel row)
+            return false;
+
+        string searchText = SearchTextBox.Text.Trim();
+
+        return string.IsNullOrWhiteSpace(searchText) ||
+               row.EmployeeName.Contains(
+                   searchText, StringComparison.OrdinalIgnoreCase) ||
+               row.IPAddress.Contains(
+                   searchText, StringComparison.OrdinalIgnoreCase) ||
+               row.EmployeeId.ToString().Contains(
+                   searchText, StringComparison.OrdinalIgnoreCase);
+    }
+
     #endregion
 
     #region UI Event Handlers
+    
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         await LoadDataAsync();
@@ -195,9 +227,9 @@ public partial class MainWindow : Window
         {
             _employeesView?.Refresh();
         }
-        else if (_currentPage == "Attendance")
+        else if (_currentPage == "AttendanceReport")
         {
-            _historyView?.Refresh();
+            _attendanceReportView?.Refresh();
         }
         else if (_currentPage == "Dashboard")
         {
@@ -208,6 +240,11 @@ public partial class MainWindow : Window
     private void DateFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         _historyView?.Refresh();
+    }
+
+    private void AttendanceReportDateFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateAttendanceReport();
     }
 
     #endregion
@@ -233,10 +270,14 @@ public partial class MainWindow : Window
         AttendancePanel.Visibility =
             page == "Attendance" ? Visibility.Visible : Visibility.Collapsed;
 
+        AttendanceReportPanel.Visibility =
+            page == "AttendanceReport" ? Visibility.Visible : Visibility.Collapsed;
+
         PageTitle.Text = page switch
         {
             "Dashboard" => "Dashboard",
             "Employees" => "Employees",
+            "AttendanceReport" => "Attendance",
             _ => "Attendance History"
         };
 
@@ -244,6 +285,7 @@ public partial class MainWindow : Window
         {
             "Dashboard" => "Your team's attendance at a glance.",
             "Employees" => "View employee records and account status.",
+            "AttendanceReport" => "Employee attendance overview.",
             _ => "Review employee check-ins and recorded IP addresses."
         };
 
@@ -264,6 +306,10 @@ public partial class MainWindow : Window
         {
             _historyView.Refresh();
         }
+        else if (page == "AttendanceReport")
+        {
+            UpdateAttendanceReport();
+        }
         else
         {
             _attendanceView.Refresh();
@@ -275,6 +321,7 @@ public partial class MainWindow : Window
         Button[] navigationButtons =
         {
         DashboardNavButton,
+        AttendanceReportNavButton,
         EmployeesNavButton,
         AttendanceNavButton
     };
@@ -297,9 +344,130 @@ public partial class MainWindow : Window
 
     #region Helper Methods
 
+    // Converts a hexadecimal color string into a WPF Color value.
     private static Color ColorFromHex(string hex)
     {
         return (Color)ColorConverter.ConvertFromString(hex);
+    }
+
+    // Updates the attendance report based on the selected date filter.
+    private void UpdateAttendanceReport()
+    {
+        if (_attendanceReportView == null ||
+            AttendanceReportDateFilter.SelectedIndex < 0)
+        {
+            return;
+        }
+
+        DateTime today = DateTime.Today;
+        int selectedIndex = AttendanceReportDateFilter.SelectedIndex;
+
+        DateTime startDate;
+        DateTime endDate;
+
+        switch (selectedIndex)
+        {
+            case 1: // This week: Monday through today
+                {
+                    int daysSinceMonday =
+                        ((int)today.DayOfWeek + 6) % 7;
+
+                    startDate = today.AddDays(-daysSinceMonday);
+                    endDate = today;
+                    break;
+                }
+
+            case 2: // This month through today
+                startDate = new DateTime(today.Year, today.Month, 1);
+                endDate = today;
+                break;
+
+            case 3: // Previous calendar month
+                {
+                    DateTime firstDayThisMonth =
+                        new DateTime(today.Year, today.Month, 1);
+
+                    startDate = firstDayThisMonth.AddMonths(-1);
+                    endDate = firstDayThisMonth.AddDays(-1);
+                    break;
+                }
+
+            default: // All recorded history through today
+                startDate = _allReportRecords.Count > 0
+                    ? _allReportRecords.Min(r => r.AttendanceDate.Date)
+                    : today;
+
+                endDate = today;
+                break;
+        }
+
+        int workingDays = CountWeekdays(startDate, endDate);
+
+        // Include only weekdays in the selected date range.
+        var periodRecords = _allReportRecords
+            .Where(r =>
+                r.AttendanceDate.Date >= startDate &&
+                r.AttendanceDate.Date <= endDate &&
+                r.AttendanceDate.DayOfWeek != DayOfWeek.Saturday &&
+                r.AttendanceDate.DayOfWeek != DayOfWeek.Sunday)
+            .ToList();
+
+        _attendanceReport.Clear();
+
+        foreach (var employee in _employees)
+        {
+            var employeeRecords = periodRecords
+                .Where(r => r.EmployeeId == employee.Id)
+                .ToList();
+
+            // Count each weekday only once per employee.
+            int presentDays = employeeRecords
+                .Select(r => r.AttendanceDate.Date)
+                .Distinct()
+                .Count();
+
+            // Protect against inconsistent or duplicate data.
+            presentDays = Math.Min(presentDays, workingDays);
+
+            // Keep IP addresses available for search without adding
+            // another visible table column.
+            string ipAddresses = string.Join(" ",
+                employeeRecords
+                    .Select(r => r.IPAddress)
+                    .Where(ip => !string.IsNullOrWhiteSpace(ip))
+                    .Distinct());
+
+            _attendanceReport.Add(new AttendanceSummaryRowViewModel
+                {
+                    EmployeeId = employee.Id,
+                    EmployeeName = employee.UserName,
+                    PresentDays = presentDays,
+                    AbsentDays = workingDays - presentDays,
+                    WorkingDays = workingDays,
+                    IPAddress = ipAddresses
+                });
+        }
+
+        _attendanceReportView.Refresh();
+    }
+
+    // Counts the weekdays between the start and end dates, excluding weekends.
+    private static int CountWeekdays(DateTime startDate,DateTime endDate)
+    {
+        int count = 0;
+
+        for (DateTime date = startDate.Date;
+             date <= endDate.Date;
+             date = date.AddDays(1))
+        {
+            if (date.DayOfWeek != DayOfWeek.Saturday &&
+                date.DayOfWeek != DayOfWeek.Sunday)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     #endregion

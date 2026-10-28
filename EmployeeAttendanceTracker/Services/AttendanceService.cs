@@ -28,14 +28,15 @@ public class AttendanceService
             .ToListAsync();
 
         var employees = users.Select(u => new EmployeeRowViewModel
-        {            
+        {
+            Id = u.Id,
             UserName = u.UserName,
             Status = u.IsActive ? "Active" : "Inactive"
         }).ToList();
 
         for (int i = 0; i < employees.Count; i++)
         {
-            employees[i].Id = i + 1;
+            employees[i].SerialNumber  = i + 1;
         }
 
         int activeEmployees = users.Count(u => u.IsActive);

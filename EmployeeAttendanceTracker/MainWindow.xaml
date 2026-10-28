@@ -220,6 +220,58 @@
                         </Setter>
                 </Style>
 
+                <!-- Attendance report header alignment -->
+                <Style x:Key="AttendanceReportHeaderStyle"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Center"/>
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Center"/>
+                </Style>
+
+                <!-- Left-align only the Employee Name heading -->
+                <Style x:Key="AttendanceEmployeeNameHeaderStyle"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Left"/>
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Center"/>
+                        <Setter Property="Padding"
+                                Value="12,12"/>
+                </Style>
+
+                <!-- PRESENT: bold green heading -->
+                <Style x:Key="PresentHeaderStyle"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource AttendanceReportHeaderStyle}">
+                        <Setter Property="Foreground"
+                                        Value="#12A66A"/>
+                        <Setter Property="FontWeight"
+                                        Value="Bold"/>
+                </Style>
+
+                <!-- ABSENT: bold red heading -->
+                <Style x:Key="AbsentHeaderStyle"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource AttendanceReportHeaderStyle}">
+                        <Setter Property="Foreground"
+                                        Value="#DC3545"/>
+                        <Setter Property="FontWeight"
+                                        Value="Bold"/>
+                </Style>
+
+                <!-- WORKING DAYS: bold orange heading -->
+                <Style x:Key="WorkingDaysHeaderStyle"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource AttendanceReportHeaderStyle}">
+                        <Setter Property="Foreground"
+                                        Value="#E58B28"/>
+                        <Setter Property="FontWeight"
+                                        Value="Bold"/>
+                </Style>
+
         </Window.Resources>
 
         <Grid x:Name="RootGrid"
@@ -369,15 +421,21 @@
                                                    Margin="10,0,0,14"/>
 
                                         <Button x:Name="DashboardNavButton"
-                                                Content="▦    Dashboard"
+                                                Content="⌂    Dashboard"
                                                 Tag="Dashboard"
                                                 Click="NavigationButton_Click"
                                                 Style="{StaticResource NavigationButtonStyle}"
                                                 Background="#2864E8"
-                                                Foreground="White"/>                                        
+                                                Foreground="White"/>
+
+                                        <Button x:Name="AttendanceReportNavButton"
+                                                Content="▤    Attendance"
+                                                Tag="AttendanceReport"
+                                                Click="NavigationButton_Click"
+                                                Style="{StaticResource NavigationButtonStyle}"/>
 
                                         <Button x:Name="AttendanceNavButton"
-                                                Content="◷    Attendance History"
+                                                Content="◷    History"
                                                 Tag="Attendance"
                                                 Click="NavigationButton_Click"
                                                 Style="{StaticResource NavigationButtonStyle}"/>
@@ -703,7 +761,145 @@
                                                 </DockPanel>
 
                                         </Border>
-                                </Grid>                                
+                                </Grid>
+
+
+                                <!-- NEW ATTENDANCE SUMMARY PAGE -->
+                                <Grid x:Name="AttendanceReportPanel"
+                                      Visibility="Collapsed">
+
+                                        <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Period filter -->
+                                        <ComboBox x:Name="AttendanceReportDateFilter"
+                                                  Grid.Row="0"
+                                                  Width="190"
+                                                  Height="40"
+                                                  HorizontalAlignment="Left"
+                                                  Margin="0,0,0,14"
+                                                  SelectionChanged="AttendanceReportDateFilter_SelectionChanged"
+                                                  SelectedIndex="0">
+
+                                                <ComboBoxItem Content="All days"/>
+                                                <ComboBoxItem Content="This week"/>
+                                                <ComboBoxItem Content="This month"/>
+                                                <ComboBoxItem Content="Last month"/>
+                                        </ComboBox>
+
+                                        <!-- One row per employee -->
+                                        <Border Grid.Row="1"
+                                                Background="White"
+                                                CornerRadius="14"
+                                                BorderBrush="#E5EAF2"
+                                                BorderThickness="1"
+                                                Padding="12">
+
+                                                <DataGrid x:Name="AttendanceReportGrid"
+                                                          ColumnHeaderStyle="{StaticResource AttendanceReportHeaderStyle}"
+                                                          AutoGenerateColumns="False"
+                                                          IsReadOnly="True"
+                                                          CanUserAddRows="False"
+                                                          CanUserDeleteRows="False"
+                                                          MinRowHeight="48"
+                                                          ColumnHeaderHeight="48"
+                                                          HeadersVisibility="Column"
+                                                          GridLinesVisibility="Horizontal"
+                                                          HorizontalGridLinesBrush="#EDF0F5"
+                                                          BorderThickness="0"
+                                                          Background="White"
+                                                          AlternatingRowBackground="#FAFBFE">
+
+
+                                                        <DataGrid.Columns>
+
+                                                                <DataGridTextColumn Header="EMPLOYEE NAME"
+                                                                                    HeaderStyle="{StaticResource AttendanceEmployeeNameHeaderStyle}"
+                                                                                    Binding="{Binding EmployeeName}"
+                                                                                    Width="2*">
+                                                                        <DataGridTextColumn.ElementStyle>
+                                                                                <Style TargetType="{x:Type TextBlock}">
+                                                                                        <Setter Property="VerticalAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="HorizontalAlignment"
+                                                                                                Value="Left"/>
+                                                                                        <Setter Property="TextAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="Margin"
+                                                                                                Value="2,0,0,0"/>
+                                                                                </Style>
+                                                                        </DataGridTextColumn.ElementStyle>
+                                                                </DataGridTextColumn>
+
+                                                                <DataGridTextColumn Header="PRESENT"
+                                                                                    Binding="{Binding PresentDays}"
+                                                                                    HeaderStyle="{StaticResource PresentHeaderStyle}"
+                                                                                    Width="*">
+                                                                        <DataGridTextColumn.ElementStyle >
+                                                                                <Style TargetType="{x:Type TextBlock}" >
+                                                                                        <Setter Property="Foreground"
+                                                                                                        Value="#12A66A"/>
+                                                                                        <Setter Property="FontWeight"
+                                                                                                Value="Bold"/>
+                                                                                        <Setter Property="HorizontalAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="TextAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="VerticalAlignment"
+                                                                                                Value="Center"/>
+                                                                                </Style>
+                                                                        </DataGridTextColumn.ElementStyle>
+                                                                </DataGridTextColumn>
+
+                                                                <DataGridTextColumn Header="ABSENT"
+                                                                                    Binding="{Binding AbsentDays}"
+                                                                                    HeaderStyle="{StaticResource AbsentHeaderStyle}"
+                                                                                    Width="*">
+                                                                        <DataGridTextColumn.ElementStyle>
+                                                                                <Style TargetType="{x:Type TextBlock}">
+                                                                                        <Setter Property="Foreground"
+                                                                                                Value="#DC3545"/>
+                                                                                        <Setter Property="FontWeight"
+                                                                                                Value="Bold"/>
+                                                                                        <Setter Property="HorizontalAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="TextAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="VerticalAlignment"
+                                                                                                Value="Center"/>
+                                                                                </Style>
+                                                                        </DataGridTextColumn.ElementStyle>
+                                                                </DataGridTextColumn>
+
+                                                                <DataGridTextColumn Header="WORKING DAYS"
+                                                                                    Binding="{Binding WorkingDays}"
+                                                                                    HeaderStyle="{StaticResource WorkingDaysHeaderStyle}"
+                                                                                    Width="1.2*">
+                                                                        <DataGridTextColumn.ElementStyle>
+                                                                                <Style TargetType="{x:Type TextBlock}">
+                                                                                        <Setter Property="Foreground"
+                                                                                                Value="#E58B28"/>
+                                                                                        <Setter Property="FontWeight"
+                                                                                                Value="Bold"/>
+                                                                                        <Setter Property="HorizontalAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="TextAlignment"
+                                                                                                Value="Center"/>
+                                                                                        <Setter Property="VerticalAlignment"
+                                                                                                Value="Center"/>
+                                                                                </Style>
+                                                                        </DataGridTextColumn.ElementStyle>
+                                                                </DataGridTextColumn>
+
+                                                        </DataGrid.Columns>
+
+                                                </DataGrid>
+                                        </Border>
+                                </Grid>
+
+
 
                                 <!-- ATTENDANCE HISTORY -->
                                 <Grid x:Name="AttendancePanel"
@@ -804,9 +1000,9 @@
                                                         <DataGrid.Columns>
 
                                                                 <DataGridTextColumn
-                                                                        Header="EMPLOYEE ID"
-                                                                        Binding="{Binding Id}"
-                                                                        Width="1*"/>
+                                                                        Header="#"
+                                                                        Binding="{Binding SerialNumber}"
+                                                                        Width="60"/>
 
                                                                 <DataGridTextColumn
                                                                         Header="EMPLOYEE NAME"
