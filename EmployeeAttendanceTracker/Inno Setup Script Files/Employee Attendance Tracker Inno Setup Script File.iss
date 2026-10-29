@@ -4,7 +4,7 @@
 #define MyAppExeName "EmployeeAttendanceTracker.exe"
 
 [Setup]
-AppId={{A2F0D38F-38C5-49A7-A7A4-2E8D8F5D96E1}
+AppId={{A2F0D38F-38C5-49A7-A7A4-2E8D8F5D96B2}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
