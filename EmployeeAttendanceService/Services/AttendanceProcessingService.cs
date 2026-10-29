@@ -1,7 +1,3 @@
-using EmployeeAttendanceService.Data;
-using EmployeeAttendanceService.Helpers;
-using Microsoft.EntityFrameworkCore;
-
 namespace EmployeeAttendanceService.Services;
 
 // Attendance Processing Service for the application.
@@ -14,6 +10,19 @@ public class AttendanceProcessingService
     {
         try
         {
+            // Get the current local date and time.
+            DateTime currentDateTime = DateTime.Now;
+
+            // Stop attendance processing on weekends and holidays.
+            if (!IsWorkingDay(currentDateTime.Date))
+            {
+                FileLoggerHelper.LogInformation(
+                    $"Attendance not marked because {currentDateTime:yyyy-MM-dd} " +
+                    "is a weekend or public holiday.");
+
+                return;
+            }
+
             // Read the current Windows username and computer name.
             string windowsUserName = Environment.UserName;
             string computerName = Environment.MachineName;
@@ -41,7 +50,7 @@ public class AttendanceProcessingService
             }
 
             // Get the current local date and time.
-            DateTime currentDateTime = DateTime.Now;
+            // DateTime currentDateTime = DateTime.Now;
             //DateTime startOfDay = currentDateTime.Date;
             //DateTime startOfNextDay = startOfDay.AddDays(1);
 
@@ -85,5 +94,37 @@ public class AttendanceProcessingService
         }
     }
 
-    #endregion    
+    #endregion
+
+    #region Methods for Working Day and Holiday Validation
+
+    // Checks whether a date is a working day.
+    private static bool IsWorkingDay(DateTime date)
+    {
+        // Exclude Saturday and Sunday.
+        if (date.DayOfWeek == DayOfWeek.Saturday ||
+            date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return false;
+        }
+
+        // Load holiday dates from appsettings.json.
+        IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json",optional: false,reloadOnChange: false)
+            .Build();
+
+        var holidays = configuration
+            .GetSection("Holidays")
+            .GetChildren()
+            .Select(section => section.Value)
+            .Where(value => !string.IsNullOrWhiteSpace(value));
+
+        // Exclude configured public holidays.
+        string dateString = date.ToString("yyyy-MM-dd");
+
+        return !holidays.Contains(dateString, StringComparer.Ordinal);
+    }
+
+    #endregion
 }

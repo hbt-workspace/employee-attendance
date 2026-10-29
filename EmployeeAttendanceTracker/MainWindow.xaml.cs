@@ -90,7 +90,7 @@ public partial class MainWindow : Window
     #endregion
 
     #region Data Loading Methods
-    
+
     private async Task LoadDataAsync()
     {
         try
@@ -215,7 +215,7 @@ public partial class MainWindow : Window
     #endregion
 
     #region UI Event Handlers
-    
+
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         await LoadDataAsync();
@@ -401,7 +401,6 @@ public partial class MainWindow : Window
                 break;
         }
 
-        int workingDays = CountWeekdays(startDate, endDate);
 
         // Include only weekdays in the selected date range.
         var periodRecords = _allReportRecords
@@ -426,6 +425,17 @@ public partial class MainWindow : Window
                 .Distinct()
                 .Count();
 
+            if (selectedIndex == 0)
+            {
+                startDate = _allReportRecords.Count > 0
+                    ? _allReportRecords.Where(x => x.EmployeeId == employee.Id).Min(r => r.AttendanceDate.Date)
+                    : today;
+
+                endDate = today;
+            }
+
+            int workingDays = CountWeekdays(startDate, endDate);
+
             // Protect against inconsistent or duplicate data.
             presentDays = Math.Min(presentDays, workingDays);
 
@@ -438,21 +448,21 @@ public partial class MainWindow : Window
                     .Distinct());
 
             _attendanceReport.Add(new AttendanceSummaryRowViewModel
-                {
-                    EmployeeId = employee.Id,
-                    EmployeeName = employee.UserName,
-                    PresentDays = presentDays,
-                    AbsentDays = workingDays - presentDays,
-                    WorkingDays = workingDays,
-                    IPAddress = ipAddresses
-                });
+            {
+                EmployeeId = employee.Id,
+                EmployeeName = employee.UserName,
+                PresentDays = presentDays,
+                AbsentDays = workingDays - presentDays,
+                WorkingDays = workingDays,
+                IPAddress = ipAddresses
+            });
         }
 
         _attendanceReportView.Refresh();
     }
 
     // Counts the weekdays between the start and end dates, excluding weekends.
-    private static int CountWeekdays(DateTime startDate,DateTime endDate)
+    private int CountWeekdays(DateTime startDate, DateTime endDate)
     {
         int count = 0;
 
@@ -460,8 +470,7 @@ public partial class MainWindow : Window
              date <= endDate.Date;
              date = date.AddDays(1))
         {
-            if (date.DayOfWeek != DayOfWeek.Saturday &&
-                date.DayOfWeek != DayOfWeek.Sunday)
+            if (_filteringService.IsWorkingDay(date))
             {
                 count++;
             }
