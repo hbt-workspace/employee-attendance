@@ -1,22 +1,43 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EmployeeAttendanceTrackerWeb.Models;
+using EmployeeAttendanceTrackerWeb.Services;
+using EmployeeAttendanceTrackerWeb.Models.ViewModels;
 
 namespace EmployeeAttendanceTrackerWeb.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    #region Fields
 
-    public HomeController(ILogger<HomeController> logger)
+    private readonly ILogger<HomeController> _logger;
+    private readonly DashboardService _dashboardService;
+
+    #endregion
+
+    #region Constructor
+
+    public HomeController(ILogger<HomeController> logger,DashboardService dashboardService)
     {
         _logger = logger;
+        _dashboardService = dashboardService;
     }
 
-    public IActionResult Index()
+    #endregion
+
+    #region Dashboard
+
+    public async Task<IActionResult> Index()
     {
-        return View();
+        DashboardViewModel dashboardData =
+            await _dashboardService.GetDashboardDataAsync();
+
+        return View(dashboardData);
     }
+
+    #endregion
+
+    #region Other Actions
 
     public IActionResult Privacy()
     {
@@ -28,4 +49,6 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    #endregion
 }

@@ -1,8 +1,228 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model EmployeeAttendanceTrackerWeb.Models.ViewModels.DashboardViewModel;
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+
+<div>
+    <!-- DASHBOARD WELCOME -->
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="font-weight-bold">Welcome back!</h3>
+            <p class="text-muted mb-0">
+                Here's your employee attendance overview for
+                @DateTime.Now.ToString("dddd, dd MMMM yyyy").
+            </p>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE SUMMARY CARDS -->
+    <div class="row">
+
+        <!-- Total Employees -->
+        <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3 class="mb-0">@Model.TotalEmployees</h3>
+                            <h6 class="text-muted font-weight-normal mt-2">
+                                Total Employees
+                            </h6>
+                        </div>
+                        <div class="col-4">
+                            <div class="icon icon-box-primary">
+                                <span class="mdi mdi-account-group icon-item"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Present Today -->
+        <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3 class="mb-0">@Model.PresentToday</h3>
+                            <h6 class="text-muted font-weight-normal mt-2">
+                                Present Today
+                            </h6>
+                        </div>
+                        <div class="col-4">
+                            <div class="icon icon-box-success">
+                                <span class="mdi mdi-account-check icon-item"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Absent Today -->
+        <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3 class="mb-0">@Model.AbsentToday</h3>
+                            <h6 class="text-muted font-weight-normal mt-2">
+                                Absent Today
+                            </h6>
+                        </div>
+                        <div class="col-4">
+                            <div class="icon icon-box-danger">
+                                <span class="mdi mdi-account-remove icon-item"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>  
+
+    <!-- TODAY'S ATTENDANCE -->
+
+    <div class="row">
+
+        <div class="col-md-5 col-xl-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+
+                    <h4 class="card-title">Today's Attendance</h4>
+                    <p class="text-muted small">
+                        Daily attendance distribution
+                    </p>
+
+                    <div style="height: 260px;">
+                        <canvas id="todayAttendanceChart"
+                                data-labels='@System.Text.Json.JsonSerializer.Serialize(Model.TodayChartLabels)'
+                                data-values='@System.Text.Json.JsonSerializer.Serialize(Model.TodayChartData)'>
+                        </canvas>
+                    </div>
+
+                    <div class="d-flex justify-content-around mt-3">
+                        <div class="text-center">
+                            <h5 class="mb-1">
+                                @(Model.TotalEmployees > 0
+                                    ? Math.Round((double)Model.PresentToday / Model.TotalEmployees * 100, 1)
+                                    : 0)%
+                            </h5>
+                            <p class="text-muted small mb-0">Attendance Rate</p>
+                        </div>
+                        <div class="text-center">
+                            <h5 class="mb-1">@Model.TotalEmployees</h5>
+                            <p class="text-muted small mb-0">Total Employees</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 04. WEEKLY ATTENDANCE -->
+        <div class="col-md-7 col-xl-8 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+
+                    <h4 class="card-title">Weekly Attendance </h4>
+                    <p class="text-muted small">
+                        Present vs Absent employees
+                    </p>
+
+                    <div style="height: 310px;">
+                        <canvas id="weeklyAttendanceChart"
+                                data-labels='@System.Text.Json.JsonSerializer.Serialize(Model.WeeklyLabels)'
+                                data-present='@System.Text.Json.JsonSerializer.Serialize(Model.WeeklyPresentData)'
+                                data-absent='@System.Text.Json.JsonSerializer.Serialize(Model.WeeklyAbsentData)'>
+                        </canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 05. RECENT ATTENDANCE -->
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h4 class="card-title mb-1">Recent Attendance</h4>
+                            <p class="text-muted small mb-0">
+                                Latest employee check-in records
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="recentAttendanceTable" class="table text-nowrap recent-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>EMPLOYEE NAME</th>
+                                    <th>DATE</th>
+                                    <th>LOGIN TIME</th>
+                                    <th>IP ADDRESS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.RecentAttendances.Any())
+                                {
+                                    int serialNumber = 1;
+
+                                    foreach (var attendance in Model.RecentAttendances)
+                                    {
+                                        <tr>
+                                            <td>@serialNumber</td>
+
+                                            <td class="employee-name">
+                                                @attendance.EmployeeName
+                                            </td>
+
+                                            <td>
+                                                @attendance.LoginTime.ToString("dd MMM yyyy")
+                                            </td>
+
+                                            <td>
+                                                @attendance.LoginTime.ToString("hh:mm tt")
+                                            </td>
+
+                                            <td>
+                                                <span class="ip-address">
+                                                    @attendance.IPAddress
+                                                </span>
+                                            </td>
+                                        </tr>
+
+                                        serialNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            No attendance records to display.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,31 +1,338 @@
-html {
-  font-size: 14px;
+
+/* HBT Workspace - Sidebar Logo */
+.sidebar-brand-wrapper .brand-logo img {
+  width: auto !important;
+  height: 40px !important;
+  max-width: 180px;
+  object-fit: contain;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
+/* Compact Sidebar Logo */
+.sidebar-brand-wrapper .brand-logo-mini img {
+  width: 35px !important;
+  height: 35px !important;
+  object-fit: contain;
+}
+
+/* Mobile Navbar Logo */
+.navbar-brand-wrapper .brand-logo-mini img {
+  width: 35px !important;
+  height: 35px !important;
+  object-fit: contain;
+}
+
+/*Responsive Navbar - Mobile */
+
+@media (max-width: 991.98px) {
+
+  .navbar-menu-wrapper {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center !important;
+    height: auto !important;
+    min-height: 70px;
+    padding: 0 15px;
+  }
+
+  /* Keep navbar controls in the first row */
+  .navbar-menu-wrapper>.navbar-toggler {
+    order: 1;
+  }
+
+  .navbar-menu-wrapper>.navbar-nav-right {
+    order: 2;
+    margin-left: auto !important;
+    flex-direction: row;
+  }
+
+  .navbar-menu-wrapper>.navbar-toggler-right {
+    order: 3;
+    margin-left: 10px;
+  }
+
+  /* Search takes the full second row */
+  .navbar-menu-wrapper>.navbar-search {
+    order: 4;
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100% !important;
+    padding: 8px 0 12px;
+    margin: 0 !important;
+  }
+
+  .navbar-search .input-group {
+    width: 100%;
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Smaller mobile screens */
+@media (max-width: 575.98px) {
+
+  .navbar-menu-wrapper {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .navbar-menu-wrapper .navbar-toggler {
+    padding: 0.5rem;
+  }
+
+  .navbar-menu-wrapper .navbar-nav-right .nav-link {
+    padding: 0.5rem;
+  }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* HBT Workspace Branding */
+/* Expanded sidebar */
+.sidebar .sidebar-brand-wrapper .brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 12px;
+  white-space: nowrap;
+  text-decoration: none;
 }
 
-body {
-  margin-bottom: 60px;
+.sidebar .sidebar-brand-wrapper .brand-logo img {
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0 !important;
+  object-fit: contain;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.sidebar .sidebar-brand-wrapper .brand-logo span {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* HBT - Collapsed Sidebar Branding */
+.sidebar-icon-only .sidebar .sidebar-brand-wrapper .brand-logo-mini {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-decoration: none;
+}
+
+.hbt-mini-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 41px;
+  border-radius: 7px;
+  background: #252b3b;
+  border: 1px solid #343d52;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  transition: all 0.2s ease;
+}
+
+.hbt-mini-brand:hover {
+  background: #343d52;
+  border-color: #4b8df8;
+  color: #ffffff;
+}
+
+/* Preserve Corona's original collapse behaviour */
+@media (min-width: 992px) {
+  .sidebar-icon-only .sidebar .sidebar-brand-wrapper .brand-logo {
+    display: none !important;
+  }
+
+  .sidebar-icon-only .sidebar .sidebar-brand-wrapper .brand-logo-mini {
+    display: flex !important;
+  }
+}
+
+
+/* HBT Workspace - Mobile Navbar */
+.mobile-navbar-search {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+
+  /* Navbar uses two rows */
+  .navbar.fixed-top {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-items: center;
+  }
+
+  /* Company branding */
+  .navbar .navbar-brand-wrapper {
+    display: flex !important;
+    flex: 0 0 105px !important;
+    width: 105px !important;
+    min-width: 105px !important;
+    height: 65px !important;
+    padding: 0 8px !important;
+    justify-content: flex-start !important;
+  }
+
+  .navbar-brand-wrapper .brand-logo-mini {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .navbar-brand-wrapper .brand-logo-mini img {
+    width: 30px !important;
+    height: 30px !important;
+    object-fit: contain;
+  }
+
+  .hbt-mobile-name {
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 700;
+  }
+
+  /* Top row controls */
+  .navbar .navbar-menu-wrapper {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 65px !important;
+    min-height: 65px !important;
+    padding: 0 8px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .navbar-menu-wrapper>.navbar-nav-right {
+    display: flex !important;
+    flex-direction: row !important;
+    margin-left: auto !important;
+  }
+
+  .navbar-menu-wrapper>.navbar-toggler-right {
+    margin-left: 5px;
+  }
+
+  /* Hide desktop controls */
+  .navbar-menu-wrapper>.navbar-toggler {
+    display: none !important;
+  }
+
+  /* Full-width mobile search row */
+  .mobile-navbar-search {
+    display: block !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    padding: 10px 12px !important;
+    margin: 0 !important;
+    background: #191c24;
+  }
+
+  .mobile-navbar-search .input-group {
+    width: 100%;
+  }
+}
+
+/* Smaller phones */
+@media (max-width: 575.98px) {
+
+  .navbar .navbar-brand-wrapper {
+    flex-basis: 100px !important;
+    width: 100px !important;
+    min-width: 100px !important;
+  }
+
+  .navbar-brand-wrapper .brand-logo-mini img {
+    width: 27px !important;
+    height: 27px !important;
+  }
+
+  .hbt-mobile-name {
+    font-size: 13px !important;
+  }
+
+  .navbar-menu-wrapper .navbar-nav-right .nav-link {
+    padding: 5px !important;
+  }
+}
+
+/* Desktop search positioning */
+@media (min-width: 992px) {
+  .navbar-menu-wrapper>form.search {
+    flex: 1 1 auto;
+    min-width: 180px;
+    max-width: 420px;
+    margin-left: 20px !important;
+  }
+}
+
+/* Mobile sidebar button */
+@media (max-width: 991.98px) {
+  .navbar-menu-wrapper>.navbar-toggler-right {
+    display: flex !important;
+    flex-shrink: 0;
+    margin-left: 8px;
+    padding: 8px;
+  }
+
+  /* Hide Admin profile on mobile */
+  .navbar-menu-wrapper .nav-profile {
+    display: none !important;
+  }
+}
+
+/* HBT Workspace - Footer */
+
+.footer {
+  background: #191c24 !important;
+  border-top: 1px solid #2c2e33;
+  padding: 20px 25px !important;
+  color: #6c7293;
+  font-size: 12px;
+}
+
+.footer strong {
+  font-weight: 600;
+}
+
+@media (max-width: 575.98px) {
+  .footer {
+    padding: 15px 10px !important;
+    line-height: 1.8;
+  }
+}
+
+/* Navbar Search Input */
+.navbar .search input,
+.mobile-navbar-search input {
+  color: #ffffff !important;
+  background-color: #191c24 !important;
+  caret-color: #ffffff;
+}
+
+/* Search Placeholder */
+.navbar .search input::placeholder,
+.mobile-navbar-search input::placeholder {
+  color: #aeb6c4 !important;
+  opacity: 1;
+}
+
+/* Search Input Focus */
+.navbar .search input:focus,
+.mobile-navbar-search input:focus {
+  color: #ffffff !important;
+  border-color: #0090e7;
+  outline: none;
+}
+
+/* Search Icon */
+.navbar .search .input-group-text,
+.mobile-navbar-search .input-group-text {
+  color: #aeb6c4;
 }

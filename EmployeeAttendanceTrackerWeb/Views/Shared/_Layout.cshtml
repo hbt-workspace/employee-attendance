@@ -1,50 +1,265 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EmployeeAttendanceTrackerWeb</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/EmployeeAttendanceTrackerWeb.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EmployeeAttendanceTrackerWeb</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+﻿@{
+    const string companyName = "HBT Workspace";
+    const string applicationName = "Employee Attendance Tracker";
+    const int InceptionYear = 2026;
+    var currentYear = DateTime.Now.Year;
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - EmployeeAttendanceTrackerWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    var copyrightYear = currentYear == InceptionYear
+        ? InceptionYear.ToString()
+        : $"{InceptionYear}-{currentYear}";
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"] - Employee Attendance Tracker</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="lib/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="lib/css/vendor.bundle.base.css">
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="lib/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="lib/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="lib/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet" href="lib/owl-carousel-2/owl.theme.default.min.css">
+    <!-- End plugin css for this page -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="lib/css/style.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="images/favicon.ico" />
+</head>
+
+<body>
+    <div class="container-scroller">
+
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+                
+                <!-- Expanded Sidebar Logo -->
+                <a class="sidebar-brand brand-logo" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/HBTLogo.png" alt="HBT Workspace" />
+                    <span>HBT Workspace</span>
+                </a>
+                <!-- Collapsed Sidebar -->
+                <a class="sidebar-brand brand-logo-mini" asp-controller="Home" asp-action="Index">
+                    <span class="hbt-mini-brand">HBT</span>
+                </a>
+
+            </div>
+
+            <ul class="nav">
+                <li class="nav-item nav-category">
+                    <span class="nav-link">Employee Attendance Tracker</span>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" asp-controller="Home" asp-action="Index">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-view-dashboard"></i>
+                        </span>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" asp-controller="Attendance" asp-action="Index">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-calendar-check"></i>
+                        </span>
+                        <span class="menu-title">Attendance Report</span>
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" asp-controller="History" asp-action="Index">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-history"></i>
+                        </span>
+                        <span class="menu-title">History</span>
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" asp-controller="Employees" asp-action="Index">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-group"></i>
+                        </span>
+                        <span class="menu-title">Employees</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+           
+            <nav class="navbar p-0 fixed-top d-flex flex-row">
+
+                <!-- Mobile Company Branding -->
+                <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center">
+                    <a class="navbar-brand brand-logo-mini d-flex align-items-center" asp-controller="Home"
+                       asp-action="Index">
+
+                        <img src="~/images/HBTLogo.png" alt="HBT Workspace" />
+                        <span class="hbt-mobile-name">HBT</span>
+
+                    </a>
+                </div>
+
+                <!-- Navbar Controls -->
+                <div class="navbar-menu-wrapper flex-grow d-flex align-items-center">
+
+                    <!-- Desktop Sidebar Toggle -->
+                    <button class="navbar-toggler align-self-center d-none d-lg-block" type="button"
+                            data-toggle="minimize" aria-label="Toggle sidebar">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+
+                    <!-- Desktop Application Branding -->
+                    <div class="d-none d-lg-flex flex-column ml-3 mr-4">
+                        <span class="font-weight-bold text-white">
+                            Employee Attendance Portal
+                        </span>
+                    </div>
+
+                    <!-- Desktop Search -->
+                    <form class="nav-link my-0 search flex-grow-1 d-none d-lg-flex" role="search" method="get"
+                          style="max-width: 420px;">
+
+                        <div class="input-group">
+                            <input type="search" id="desktopEmployeeSearch" class="form-control" name="search"
+                                   placeholder="Search employees" autocomplete="off">
+
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Right Side Navbar -->
+                    <ul class="navbar-nav navbar-nav-right ml-auto flex-row align-items-center">
+
+                        <!-- Current Date -->
+                        <li class="nav-item d-none d-xl-block">
+                            <span class="nav-link">
+                                <i class="mdi mdi-calendar-blank mr-1"></i>
+                                @DateTime.Now.ToString("dd MMM yyyy")
+                            </span>
+                        </li>
+
+                        <!-- User Profile -->
+                        <li class="nav-item dropdown nav-profile d-none d-lg-block">
+                            <a class="nav-link" href="#" id="profileDropdown" data-toggle="dropdown"
+                               aria-expanded="false">
+
+                                <div class="navbar-profile">
+                                    <i class="mdi mdi-account-circle-outline" style="font-size: 30px;"></i>
+                                    <p class="mb-0 d-none d-sm-block">Admin</p>
+                                </div>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <!-- Mobile Sidebar Toggle -->
+                    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                            data-toggle="offcanvas" aria-label="Open navigation">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+
+                </div>
+
+                <!-- Mobile Search - Separate Row -->
+                <form class="mobile-navbar-search d-lg-none" role="search" method="get">
+
+                    <div class="input-group">
+                        <input type="search" id="mobileEmployeeSearch" class="form-control" name="search"
+                               placeholder="Search employees" aria-label="Search employees" autocomplete="off">
+
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-magnify"></i>
+                            </span>
+                        </div>
+                    </div>
+                </form>              
+
+            </nav>
+
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    @RenderBody()
+                </div>
+
+                <!-- footer -->
+                <footer class="footer">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+                        <!-- Company Information -->
+                        <div class="text-center text-md-left mb-2 mb-md-0">
+                            <span class="text-muted">
+                                © @copyrightYear
+                                <a href="https://hbtworkspace.in" target="_blank"
+                                   rel="noopener noreferrer">@companyName</a>.
+                                All rights reserved.
+                            </span>
+                        </div>
+
+                        <!-- Application Information -->
+                        <div class="text-center text-md-right">
+                            <span class="text-muted">
+                                @applicationName
+                            </span>
+                            <span class="text-muted mx-2">|</span>
+                            <span class="text-muted">
+                                Version 1.0.0
+                            </span>
+                        </div>
+
+                    </div>
+                </footer>
+
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="lib/js/vendor.bundle.base.js"></script>
+    <!-- Plugin js for this page -->
+    <script src="lib/chart.js/Chart.min.js"></script>
+    <script src="~/js/attendance-dashboard.js" asp-append-version="true"></script>
+    <script src="lib/progressbar.js/progressbar.min.js"></script>
+    <script src="lib/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="lib/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="lib/owl-carousel-2/owl.carousel.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="lib/js/off-canvas.js"></script>
+    <script src="lib/js/hoverable-collapse.js"></script>
+    <script src="lib/js/misc.js"></script>
+    <script src="lib/js/settings.js"></script>
+    <script src="lib/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="lib/js/dashboard.js"></script>
+    <!-- End custom js for this page -->
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
