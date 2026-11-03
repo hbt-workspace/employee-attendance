@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddSingleton<WorkingDayHelper>();
 builder.Services.AddScoped<DashboardService>();
+builder.Services.AddScoped<AttendanceService>();
 
 var app = builder.Build();
 

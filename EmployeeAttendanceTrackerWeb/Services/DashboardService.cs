@@ -91,26 +91,7 @@ public class DashboardService
 
         // 5. Load weekly attendance data.
         await GetWeeklyAttendanceAsync(model, activeEmployeeIds, today);
-
-        // 6. Load recent attendance records.
-        model.RecentAttendances = await (
-            from attendance in _context.Attendances.AsNoTracking()
-            join employee in _context.Users.AsNoTracking()
-                on attendance.UserId equals employee.Id
-            where !attendance.IsDeleted
-                  && !employee.IsDeleted
-                  && employee.IsActive
-                  && attendance.CreatedOn.Date == today
-            orderby attendance.CreatedOn descending
-            select new RecentAttendanceViewModel
-            {
-                Id = attendance.Id,
-                EmployeeName = employee.UserName,
-                LoginTime = attendance.CreatedOn,
-                IPAddress = attendance.IPAddress,
-            })
-            .ToListAsync();
-
+        
         return model;
     }
 

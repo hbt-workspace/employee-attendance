@@ -1,0 +1,170 @@
+@model EmployeeAttendanceTrackerWeb.Models.ViewModels.TodayAttendanceViewModel
+
+@{
+    ViewData["Title"] = "Today's Attendance";
+}
+
+<link rel="stylesheet" href="~/css/today-attendance.css" asp-append-version="true" />
+
+<div class="today-attendance-page">
+    <!-- ATTENDANCE SUMMARY CARDS -->
+    <div class="row">
+
+        <!-- Total Present -->
+        <div class="col-12 col-sm-6 col-xl-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3 class="mb-0">@Model.TotalPresent</h3>
+                            <h6 class="text-muted font-weight-normal mt-2">
+                                Total Present
+                            </h6>
+                        </div>
+                        <div class="col-4">
+                            <div class="icon icon-box-success">
+                                <span class="mdi mdi-account-check icon-item"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- First Login -->
+        <div class="col-12 col-sm-6 col-xl-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3 class="mb-0">
+                                @(Model.FirstLogin?.ToString("hh:mm tt") ?? "--")
+                            </h3>
+                            <h6 class="text-muted font-weight-normal mt-2">
+                                First Login
+                            </h6>
+                        </div>
+                        <div class="col-4">
+                            <div class="icon icon-box-primary">
+                                <span class="mdi mdi-clock-start icon-item"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last Login -->
+        <div class="col-12 col-sm-6 col-xl-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3 class="mb-0">
+                                @(Model.LastLogin?.ToString("hh:mm tt") ?? "--")
+                            </h3>
+                            <h6 class="text-muted font-weight-normal mt-2">
+                                Last Login
+                            </h6>
+                        </div>
+                        <div class="col-4">
+                            <div class="icon icon-box-warning">
+                                <span class="mdi mdi-clock-end icon-item"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RECENT ATTENDANCE -->
+    <div class="row mb-4 attendance-heading">
+        <div class="col-12">
+            <h3 class="font-weight-bold">Today's Attendance</h3>
+            <p class="text-muted mb-0">
+                Employee check-in records for
+                @DateTime.Today.ToString("dddd, dd MMMM yyyy").
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="attendance-card-header">
+                        <div>
+                            <h4 class="card-title mb-1">Attendance Records</h4>
+                            <p class="text-muted small mb-0 attendance-description">
+                                Employees who have marked attendance today
+                            </p>
+                        </div>
+
+                        <span class="badge badge-primary">
+                            Total: @Model.TotalPresent
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="recentAttendanceTable" class="table text-nowrap recent-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>EMPLOYEE NAME</th>
+                                    <th>DATE</th>
+                                    <th>LOGIN TIME</th>
+                                    <th>IP ADDRESS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.Attendances.Any())
+                                {
+                                    int serialNumber = 1;
+
+                                    foreach (var attendance in Model.Attendances)
+                                    {
+                                        <tr>
+                                            <td>@serialNumber</td>
+
+                                            <td class="employee-name">
+                                                @attendance.EmployeeName
+                                            </td>
+
+                                            <td>
+                                                @attendance.LoginTime.ToString("dd MMM yyyy")
+                                            </td>
+
+                                            <td>
+                                                @attendance.LoginTime.ToString("hh:mm tt")
+                                            </td>
+
+                                            <td>
+                                                <span class="ip-address">
+                                                    @attendance.IPAddress
+                                                </span>
+                                            </td>
+                                        </tr>
+
+                                        serialNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            No attendance records to display.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

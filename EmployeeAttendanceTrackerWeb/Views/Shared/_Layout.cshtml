@@ -60,7 +60,8 @@
                     <span class="nav-link">Employee Attendance Tracker</span>
                 </li>
 
-                <li class="nav-item menu-items">
+                <li
+                    class="nav-item menu-items @(currentController == "Home" && currentAction == "Index" ? "active" : "")">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">
                         <span class="menu-icon">
                             <i class="mdi mdi-view-dashboard"></i>
@@ -73,6 +74,15 @@
                     <a class="nav-link" asp-controller="Attendance" asp-action="Index">
                         <span class="menu-icon">
                             <i class="mdi mdi-calendar-check"></i>
+                        </span>
+                        <span class="menu-title">Today's Attendance</span>
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items @(currentController == "Home" && currentAction == "Report" ? "active" : "")">
+                    <a class="nav-link" asp-controller="Home" asp-action="Report">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-chart-line"></i>
                         </span>
                         <span class="menu-title">Attendance Report</span>
                     </a>
@@ -132,20 +142,24 @@
                     </div>
 
                     <!-- Desktop Search -->
-                    <form class="nav-link my-0 search flex-grow-1 d-none d-lg-flex" role="search" method="get"
-                          style="max-width: 420px;">
+                    @if (!(currentController == "Home" && currentAction == "Index"))
+                    {
+                        <form class="nav-link my-0 search flex-grow-1 d-none d-lg-flex" role="search" method="get"
+                              style="max-width: 420px;">
 
-                        <div class="input-group">
-                            <input type="search" id="desktopEmployeeSearch" class="form-control" name="search"
-                                   placeholder="Search employees" autocomplete="off">
+                            <div class="input-group">
+                                <input type="search" id="desktopEmployeeSearch" class="form-control" name="search"
+                                       placeholder="Search employees" autocomplete="off">
 
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="mdi mdi-magnify"></i>
-                                </span>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="mdi mdi-magnify"></i>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    }
+                        
 
                     <!-- Right Side Navbar -->
                     <ul class="navbar-nav navbar-nav-right ml-auto flex-row align-items-center">
@@ -181,20 +195,23 @@
                 </div>
 
                 <!-- Mobile Search - Separate Row -->
-                <form class="mobile-navbar-search d-lg-none" role="search" method="get">
+                @if (!(currentController == "Home" && currentAction == "Index"))
+                {
+                    <form class="mobile-navbar-search d-lg-none" role="search" method="get">
 
-                    <div class="input-group">
-                        <input type="search" id="mobileEmployeeSearch" class="form-control" name="search"
-                               placeholder="Search employees" aria-label="Search employees" autocomplete="off">
+                        <div class="input-group">
+                            <input type="search" id="mobileEmployeeSearch" class="form-control" name="search"
+                                   placeholder="Search employees" aria-label="Search employees" autocomplete="off">
 
-                        <div class="input-group-append">
-                            <span class="input-group-text">
-                                <i class="mdi mdi-magnify"></i>
-                            </span>
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                </form>              
-
+                    </form>
+                }
+                
             </nav>
 
             <!-- partial -->
@@ -257,6 +274,7 @@
     <!-- endinject -->
     <!-- Custom js for this page -->
     <script src="lib/js/dashboard.js"></script>
+    <script src="~/js/employee-search.js" asp-append-version="true"></script>
     <!-- End custom js for this page -->
 
     @await RenderSectionAsync("Scripts", required: false)

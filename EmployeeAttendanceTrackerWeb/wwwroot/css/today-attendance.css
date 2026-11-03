@@ -1,0 +1,203 @@
+/* Today's Attendance - Responsive Layout */
+.today-attendance-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* Prevent content from causing page overflow */
+.today-attendance-page .row {
+    min-width: 0;
+}
+
+/* Summary Cards*/
+.today-attendance-page .stretch-card {
+    display: flex;
+}
+
+.today-attendance-page .stretch-card>.card {
+    width: 100%;
+}
+
+.today-attendance-page .card-body {
+    min-width: 0;
+}
+
+/* Attendance Section */
+.today-attendance-page .attendance-heading {
+    margin-bottom: 20px;
+}
+
+.today-attendance-page .attendance-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Attendance Table */
+.today-attendance-page .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.today-attendance-page .recent-attendance-table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+}
+
+.today-attendance-page .recent-attendance-table thead th {
+    background-color: rgba(255, 255, 255, 0.045);
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 16px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    white-space: nowrap;
+}
+
+.today-attendance-page .recent-attendance-table tbody td {
+    padding: 17px 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    color: #9caed0;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.today-attendance-page .recent-attendance-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.today-attendance-page .recent-attendance-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.today-attendance-page .recent-attendance-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.035);
+}
+
+.today-attendance-page .recent-attendance-table .employee-name {
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.today-attendance-page .recent-attendance-table .ip-address {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: rgba(59, 130, 246, 0.09);
+    color: #9db9ed;
+    font-size: 12px;
+}
+
+/* Tablet */
+
+@media (max-width: 991.98px) {
+    .today-attendance-page {
+        overflow-x: hidden;
+    }
+}
+
+/* Mobile*/
+@media (max-width: 575.98px) {
+
+    .today-attendance-page {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Summary cards */
+    .today-attendance-page .stretch-card {
+        margin-bottom: 15px;
+    }
+
+    .today-attendance-page .card-body {
+        padding: 18px;
+    }
+
+    .today-attendance-page .card-body h3 {
+        font-size: 23px;
+    }
+
+    /* Page heading */
+    .today-attendance-page h3.font-weight-bold {
+        font-size: 21px;
+        line-height: 1.4;
+    }
+
+    .today-attendance-page .attendance-heading {
+        margin-bottom: 18px;
+    }
+
+    .today-attendance-page .attendance-description {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    /* Attendance card header */
+    .today-attendance-page .attendance-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .today-attendance-page .attendance-card-header .badge {
+        align-self: flex-start;
+    }
+
+    .today-attendance-page .card-title {
+        font-size: 16px;
+    }
+
+    /* Table */
+    .today-attendance-page .recent-attendance-table {
+        min-width: 650px;
+    }
+
+    .today-attendance-page .recent-attendance-table thead th,
+    .today-attendance-page .recent-attendance-table tbody td {
+        padding: 13px 12px;
+        font-size: 12px;
+    }
+}
+
+/* Very Small Mobile*/
+@media (max-width: 360px) {
+
+    .today-attendance-page .card-body {
+        padding: 14px;
+    }
+
+    .today-attendance-page h3.font-weight-bold {
+        font-size: 19px;
+    }
+
+    .today-attendance-page .card-body h3 {
+        font-size: 21px;
+    }
+}
+
+/* Mobile: Fixed navbar spacing */
+@media (max-width: 991.98px) {
+
+    .page-body-wrapper {
+        padding-top: 0 !important;
+    }
+
+    .page-body-wrapper>.main-panel {
+        width: 100%;
+        min-width: 0;
+        margin-top: 70px !important;
+    }
+
+    .page-body-wrapper .content-wrapper {
+        padding-top: 15px !important;
+    }
+}

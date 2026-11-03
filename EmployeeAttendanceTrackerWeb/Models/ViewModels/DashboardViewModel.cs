@@ -13,7 +13,6 @@ public class DashboardViewModel
     public List<string> WeeklyLabels { get; set; } = new();
     public List<int> WeeklyPresentData { get; set; } = new();
     public List<int> WeeklyAbsentData { get; set; } = new();
-    public List<RecentAttendanceViewModel> RecentAttendances { get; set; } = new();
 
     #endregion
 }

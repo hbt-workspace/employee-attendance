@@ -4,8 +4,6 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
-
 <div>
     <!-- DASHBOARD WELCOME -->
 
@@ -142,83 +140,6 @@
                                 data-present='@System.Text.Json.JsonSerializer.Serialize(Model.WeeklyPresentData)'
                                 data-absent='@System.Text.Json.JsonSerializer.Serialize(Model.WeeklyAbsentData)'>
                         </canvas>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- 05. RECENT ATTENDANCE -->
-    <div class="row">
-        <div class="col-12 grid-margin">
-            <div class="card">
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h4 class="card-title mb-1">Recent Attendance</h4>
-                            <p class="text-muted small mb-0">
-                                Latest employee check-in records
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table id="recentAttendanceTable" class="table text-nowrap recent-attendance-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>EMPLOYEE NAME</th>
-                                    <th>DATE</th>
-                                    <th>LOGIN TIME</th>
-                                    <th>IP ADDRESS</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @if (Model.RecentAttendances.Any())
-                                {
-                                    int serialNumber = 1;
-
-                                    foreach (var attendance in Model.RecentAttendances)
-                                    {
-                                        <tr>
-                                            <td>@serialNumber</td>
-
-                                            <td class="employee-name">
-                                                @attendance.EmployeeName
-                                            </td>
-
-                                            <td>
-                                                @attendance.LoginTime.ToString("dd MMM yyyy")
-                                            </td>
-
-                                            <td>
-                                                @attendance.LoginTime.ToString("hh:mm tt")
-                                            </td>
-
-                                            <td>
-                                                <span class="ip-address">
-                                                    @attendance.IPAddress
-                                                </span>
-                                            </td>
-                                        </tr>
-
-                                        serialNumber++;
-                                    }
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
-                                            No attendance records to display.
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
                     </div>
 
                 </div>
