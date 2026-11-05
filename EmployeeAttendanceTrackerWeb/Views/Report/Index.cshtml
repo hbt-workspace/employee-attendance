@@ -1,0 +1,208 @@
+@model EmployeeAttendanceTrackerWeb.Models.ViewModels.AttendanceReportViewModel
+
+@{
+    ViewData["Title"] = "Attendance Report";
+}
+
+<link rel="stylesheet" href="~/css/attendance-report.css" asp-append-version="true" />
+
+<div class="attendance-report-page">
+
+    <!-- DATE FILTER SECTION -->
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card attendance-filter-card">
+                <div class="card-body">
+
+                    <!-- Filter Header -->
+                    <div class="attendance-filter-header">
+                        <div class="filter-icon">
+                            <i class="mdi mdi-filter-variant"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="card-title mb-1">Filter Attendance</h4>
+                            <p class="text-muted mb-0">
+                                Select a date range to view attendance records.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="filter-divider"></div>
+
+                    <!-- Filter Form -->
+                    <form asp-controller="Report" asp-action="Index" method="get">
+
+                        <!-- CUSTOM VALIDATION ERROR -->
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="custom-error-box mb-3">
+                                <i class="mdi mdi-alert-circle-outline"></i>
+
+                                <div>
+                                    <strong>Unable to Apply Date Filter</strong>
+
+                                    <ul class="mb-0 mt-1">
+                                        @foreach (var error in ViewData.ModelState.Values
+                                            .SelectMany(v => v.Errors))
+                                        {
+                                            <li>@error.ErrorMessage</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="row align-items-end">
+
+                            <!-- From Date -->
+                            <div class="col-12 col-md-4 mb-3">
+                                <label for="fromDate" class="filter-label">
+                                    <i class="mdi mdi-calendar-start"></i>
+                                    From Date
+                                </label>
+
+                                <input type="date" id="fromDate" name="fromDate" class="form-control filter-date-input"
+                                       value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                            </div>
+
+                            <!-- To Date -->
+                            <div class="col-12 col-md-4 mb-3">
+                                <label for="toDate" class="filter-label">
+                                    <i class="mdi mdi-calendar-end"></i>
+                                    To Date
+                                </label>
+
+                                <input type="date" id="toDate" name="toDate" class="form-control filter-date-input"
+                                       value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                            </div>
+
+                            <!-- Search Button -->
+                            <div class="col-12 col-md-2 mb-3">
+                                <button type="submit" class="btn btn-primary filter-action-btn w-100">
+                                    <i class="mdi mdi-magnify"></i>
+                                    Search
+                                </button>
+                            </div>
+
+                            <!-- Clear Button -->
+                            <div class="col-12 col-md-2 mb-3">
+                                <a asp-controller="Report" asp-action="Index"
+                                   class="btn btn-secondary filter-action-btn clear-filter-btn w-100">
+                                    <i class="mdi mdi-filter-remove-outline"></i>
+                                    Clear
+                                </a>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE REPORT HEADING -->
+    <div class="row mb-4 attendance-heading">
+        <div class="col-12">
+            <h3 class="font-weight-bold">Attendance Report</h3>
+            <p class="text-muted mb-0">
+                @if (Model.FromDate.HasValue && Model.ToDate.HasValue)
+                {
+                    <span>
+                        Showing attendance for
+                        <strong>@Model.FromDate.Value.ToString("dd MMM yyyy")</strong>
+                        –
+                        <strong>@Model.ToDate.Value.ToString("dd MMM yyyy")</strong>.
+                        Records are available up to
+                        <strong>@DateTime.Today.ToString("dd MMM yyyy")</strong>.
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Showing attendance for all employees.
+                        Records are available up to
+                        <strong>@DateTime.Today.ToString("dd MMM yyyy")</strong>.
+                    </span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE REPORT TABLE -->
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="attendanceReportTable" class="table text-nowrap recent-attendance-table">
+
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>EMPLOYEE NAME</th>
+                                    <th class="text-center">ABSENT</th>
+                                    <th class="text-center">PRESENT</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.Employees.Any())
+                                {
+                                    int serialNumber = 1;
+
+                                    foreach (var employee in Model.Employees)
+                                    {
+                                        <tr>
+                                            <td>@serialNumber</td>
+                                            <td class="employee-name">@employee.EmployeeName</td>
+                                            <td class="text-center">
+                                                <span class="text-danger fw-bold">
+                                                    @employee.AbsentDays
+                                                </span>
+                                                <span class="text-primary fw-bold">
+                                                    / @employee.LeaveCredits
+                                                </span>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <span class="text-success fw-bold">
+                                                    @employee.PresentDays
+                                                </span>
+                                                <span class="text-primary fw-bold">
+                                                    / @employee.TotalWorkingDays
+                                                </span>
+                                            </td>
+                                        </tr>
+
+                                        serialNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">
+                                            No attendance records to display.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- TABLE LEGEND -->
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <span class="text-danger fw-bold">Absent:</span>
+                            Absent days / Total leave credits
+                            &nbsp; | &nbsp;
+                            <span class="text-success fw-bold">Present:</span>
+                            Present days / Total working days
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

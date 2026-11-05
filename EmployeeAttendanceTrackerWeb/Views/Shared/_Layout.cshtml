@@ -2,14 +2,14 @@
     const string companyName = "HBT Workspace";
     const string applicationName = "Employee Attendance Tracker";
     const int InceptionYear = 2026;
-    var currentYear = DateTime.Now.Year;
+    var currentYear = DateTime.Now.Year;    
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 
     var copyrightYear = currentYear == InceptionYear
         ? InceptionYear.ToString()
         : $"{InceptionYear}-{currentYear}";
-
-    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -21,19 +21,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewData["Title"] - Employee Attendance Tracker</title>
     <!-- plugins:css -->
-    <link rel="stylesheet" href="lib/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="lib/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="~/lib/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/lib/css/vendor.bundle.base.css" asp-append-version="true" />
     <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="lib/jvectormap/jquery-jvectormap.css">
-    <link rel="stylesheet" href="lib/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="lib/owl-carousel-2/owl.carousel.min.css">
-    <link rel="stylesheet" href="lib/owl-carousel-2/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/lib/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="~/lib/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="~/lib/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/lib/owl-carousel-2/owl.theme.default.min.css">
     <!-- End plugin css for this page -->
     <!-- Layout styles -->
-    <link rel="stylesheet" href="lib/css/style.css">
+    <link rel="stylesheet" href="~/lib/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="images/favicon.ico" />
+    <link rel="shortcut icon" href="~/images/favicon.ico" />
 </head>
 
 <body>
@@ -70,7 +70,8 @@
                     </a>
                 </li>
 
-                <li class="nav-item menu-items">
+                <li
+                    class="nav-item menu-items @((currentController == "Attendance" && currentAction == "Index") ? "active" : "")">
                     <a class="nav-link" asp-controller="Attendance" asp-action="Index">
                         <span class="menu-icon">
                             <i class="mdi mdi-calendar-check"></i>
@@ -79,24 +80,16 @@
                     </a>
                 </li>
 
-                <li class="nav-item menu-items @(currentController == "Home" && currentAction == "Report" ? "active" : "")">
-                    <a class="nav-link" asp-controller="Home" asp-action="Report">
+                <li
+                    class="nav-item menu-items @((currentController == "Report" && currentAction == "Index") ? "active" : "")">
+                    <a class="nav-link" asp-controller="Report" asp-action="Index">
                         <span class="menu-icon">
                             <i class="mdi mdi-chart-line"></i>
                         </span>
                         <span class="menu-title">Attendance Report</span>
                     </a>
                 </li>
-
-                <li class="nav-item menu-items">
-                    <a class="nav-link" asp-controller="History" asp-action="Index">
-                        <span class="menu-icon">
-                            <i class="mdi mdi-history"></i>
-                        </span>
-                        <span class="menu-title">History</span>
-                    </a>
-                </li>
-
+                
                 <li class="nav-item menu-items">
                     <a class="nav-link" asp-controller="Employees" asp-action="Index">
                         <span class="menu-icon">
@@ -256,25 +249,25 @@
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
-    <script src="lib/js/vendor.bundle.base.js"></script>
+    <script src="~/lib/js/vendor.bundle.base.js"></script>
     <!-- Plugin js for this page -->
-    <script src="lib/chart.js/Chart.min.js"></script>
-    <script src="~/js/attendance-dashboard.js" asp-append-version="true"></script>
-    <script src="lib/progressbar.js/progressbar.min.js"></script>
-    <script src="lib/jvectormap/jquery-jvectormap.min.js"></script>
-    <script src="lib/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="lib/owl-carousel-2/owl.carousel.min.js"></script>
+    <script src="~/lib/chart.js/Chart.min.js"></script>
+    <script src="~/lib/progressbar.js/progressbar.min.js"></script>
+    <script src="~/lib/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="~/lib/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="~/lib/owl-carousel-2/owl.carousel.min.js"></script>
     <!-- End plugin js for this page -->
     <!-- inject:js -->
-    <script src="lib/js/off-canvas.js"></script>
-    <script src="lib/js/hoverable-collapse.js"></script>
-    <script src="lib/js/misc.js"></script>
-    <script src="lib/js/settings.js"></script>
-    <script src="lib/js/todolist.js"></script>
+    <script src="~/lib/js/off-canvas.js"></script>
+    <script src="~/lib/js/hoverable-collapse.js"></script>
+    <script src="~/lib/js/misc.js"></script>
+    <script src="~/lib/js/settings.js"></script>
+    <script src="~/lib/js/todolist.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
-    <script src="lib/js/dashboard.js"></script>
+    <script src="~/lib/js/dashboard.js"></script>
     <script src="~/js/employee-search.js" asp-append-version="true"></script>
+    <script src="~/js/attendance-dashboard.js" asp-append-version="true"></script>
     <!-- End custom js for this page -->
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -1,18 +1,26 @@
-// Recent Attendance Employee Search
+// Employee Search - Today's Attendance and Attendance Report
 const desktopSearch = document.getElementById('desktopEmployeeSearch');
 const mobileSearch = document.getElementById('mobileEmployeeSearch');
-const attendanceTable = document.getElementById('recentAttendanceTable');
 
-if (attendanceTable) {
+// Support both attendance tables.
+const attendanceTables = [
+    document.getElementById('recentAttendanceTable'),
+    document.getElementById('attendanceReportTable')
+].filter(table => table !== null);
 
-    const attendanceRows = attendanceTable.querySelectorAll('tbody tr');
-    const employeeRows = Array.from(attendanceRows).filter(row =>
-        row.querySelector('.employee-name')
-    );
+// Filter employees in the available tables.
+function filterAttendance(searchText) {
 
-    function filterAttendance(searchText) {
+    const searchValue = searchText.trim().toLowerCase();
 
-        const searchValue = searchText.trim().toLowerCase();
+    attendanceTables.forEach(attendanceTable => {
+
+        const attendanceRows = attendanceTable.querySelectorAll('tbody tr');
+
+        const employeeRows = Array.from(attendanceRows).filter(row =>
+            row.querySelector('.employee-name')
+        );
+
         let visibleCount = 0;
 
         employeeRows.forEach(row => {
@@ -55,27 +63,29 @@ if (attendanceTable) {
         else if (noResultsRow) {
             noResultsRow.remove();
         }
-    }
+    });
+}
 
-    // Desktop search
-    if (desktopSearch) {
-        desktopSearch.addEventListener('input', function () {
-            filterAttendance(this.value);
+// Desktop search
+if (desktopSearch) {
+    desktopSearch.addEventListener('input', function () {
 
-            if (mobileSearch) {
-                mobileSearch.value = this.value;
-            }
-        });
-    }
+        filterAttendance(this.value);
 
-    // Mobile search
-    if (mobileSearch) {
-        mobileSearch.addEventListener('input', function () {
-            filterAttendance(this.value);
+        if (mobileSearch) {
+            mobileSearch.value = this.value;
+        }
+    });
+}
 
-            if (desktopSearch) {
-                desktopSearch.value = this.value;
-            }
-        });
-    }
+// Mobile search
+if (mobileSearch) {
+    mobileSearch.addEventListener('input', function () {
+
+        filterAttendance(this.value);
+
+        if (desktopSearch) {
+            desktopSearch.value = this.value;
+        }
+    });
 }
