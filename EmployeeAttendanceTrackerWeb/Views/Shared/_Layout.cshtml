@@ -89,6 +89,16 @@
                         <span class="menu-title">Attendance Report</span>
                     </a>
                 </li>
+
+                <li
+                    class="nav-item menu-items @((currentController == "History" && currentAction == "Index") ? "active" : "")">
+                    <a class="nav-link" asp-controller="History" asp-action="Index">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-chart-line"></i>
+                        </span>
+                        <span class="menu-title">Attendance History</span>
+                    </a>
+                </li>
                 
                 <li class="nav-item menu-items">
                     <a class="nav-link" asp-controller="Employees" asp-action="Index">

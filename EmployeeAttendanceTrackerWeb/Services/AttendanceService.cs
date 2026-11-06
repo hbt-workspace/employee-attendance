@@ -212,4 +212,73 @@ public class AttendanceService
     }
 
     #endregion
+
+    #region Attendance History
+
+    // Loads attendance history based on employee and date filters.
+    public async Task<AttendanceHistoryViewModel> GetAttendanceHistoryAsync(
+        AttendanceHistoryFilterViewModel filter)
+    {
+        // Get today's date.
+        DateTime today = DateTime.Today;
+
+        // Set default date range to the current month.
+        DateTime fromDate = filter.FromDate?.Date
+             ?? new DateTime(today.Year, today.Month, 1);
+
+        DateTime toDate = filter.ToDate?.Date
+             ?? today;
+
+        // Load active employees for the dropdown.
+        var employees = await _context.Users
+            .AsNoTracking()
+            .Where(u => !u.IsDeleted && u.IsActive)
+            .OrderBy(u => u.UserName)
+            .Select(u => new EmployeeDropdownViewModel
+            {
+                Id = u.Id,
+                EmployeeName = u.UserName
+            })
+            .ToListAsync();
+
+        // Start with attendance records.
+        var query =
+            from attendance in _context.Attendances.AsNoTracking()
+            join employee in _context.Users.AsNoTracking()
+                on attendance.UserId equals employee.Id
+            where !attendance.IsDeleted
+                  && !employee.IsDeleted
+                  && employee.IsActive
+                  && attendance.CreatedOn >= fromDate
+                  && attendance.CreatedOn < toDate.AddDays(1)
+            select new { attendance, employee };
+
+        // Get attendance records, newest first.
+        var attendances = await query
+            .OrderByDescending(x => x.attendance.CreatedOn)
+            .Select(x => new AttendanceHistoryItemViewModel
+            {
+                Id = x.attendance.Id,
+                EmployeeName = x.employee.UserName,
+                AttendanceDate = x.attendance.CreatedOn.Date,
+                LoginTime = x.attendance.CreatedOn,
+                IPAddress = x.attendance.IPAddress
+            })
+            .ToListAsync();
+
+        // Return attendance history.
+        return new AttendanceHistoryViewModel
+        {
+            Filter = new AttendanceHistoryFilterViewModel
+            {
+                EmployeeId = filter.EmployeeId,
+                FromDate = filter.FromDate,
+                ToDate = filter.ToDate,
+                Employees = employees
+            },
+            Attendances = attendances
+        };
+    }
+
+    #endregion
 }

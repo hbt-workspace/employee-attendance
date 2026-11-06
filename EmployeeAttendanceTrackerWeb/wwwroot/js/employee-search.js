@@ -5,7 +5,8 @@ const mobileSearch = document.getElementById('mobileEmployeeSearch');
 // Support both attendance tables.
 const attendanceTables = [
     document.getElementById('recentAttendanceTable'),
-    document.getElementById('attendanceReportTable')
+    document.getElementById('attendanceReportTable'),
+    document.getElementById('attendanceHistoryTable'),
 ].filter(table => table !== null);
 
 // Filter employees in the available tables.

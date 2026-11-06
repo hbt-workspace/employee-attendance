@@ -1,0 +1,204 @@
+@model EmployeeAttendanceTrackerWeb.Models.ViewModels.AttendanceHistoryViewModel
+
+@{
+    ViewData["Title"] = "Attendance History";
+}
+
+<link rel="stylesheet" href="~/css/attendance-history.css" asp-append-version="true" />
+
+<div class="attendance-history-page">
+
+    <!-- FILTER SECTION -->
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card attendance-filter-card">
+                <div class="card-body">
+
+                    <div class="attendance-filter-header">
+                        <div class="filter-icon">
+                            <i class="mdi mdi-history"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="card-title mb-1">Filter Attendance History</h4>
+                            <p class="text-muted mb-0">
+                                Select an employee and date range to view attendance records.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="filter-divider"></div>
+
+                    <form asp-controller="History" asp-action="Index" method="get">
+
+                        <!-- CUSTOM VALIDATION ERROR -->
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="custom-error-box mb-3">
+                                <i class="mdi mdi-alert-circle-outline"></i>
+
+                                <div>
+                                    <strong>Unable to Apply Filters</strong>
+
+                                    <ul class="mb-0 mt-1">
+                                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                        {
+                                            <li>@error.ErrorMessage</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="row align-items-end">
+                            <!-- FROM DATE -->
+                            <div class="col-12 col-md-4 col-lg-4 mb-3">
+                                <label for="fromDate" class="filter-label">
+                                    <i class="mdi mdi-calendar-start"></i>
+                                    From Date
+                                </label>
+
+                                <input type="date" id="fromDate" name="fromDate" class="form-control filter-date-input"
+                                       value="@Model.Filter.FromDate?.ToString("yyyy-MM-dd")" />
+                            </div>
+
+                            <!-- TO DATE -->
+                            <div class="col-12 col-md-4 col-lg-4 mb-3">
+                                <label for="toDate" class="filter-label">
+                                    <i class="mdi mdi-calendar-end"></i>
+                                    To Date
+                                </label>
+
+                                <input type="date" id="toDate" name="toDate" class="form-control filter-date-input"
+                                       value="@Model.Filter.ToDate?.ToString("yyyy-MM-dd")" />
+                            </div>
+
+                            <!-- SEARCH -->
+                            <div class="col-12 col-md-2 mb-3">
+                                <button type="submit" class="btn btn-primary filter-action-btn w-100">
+                                    <i class="mdi mdi-magnify"></i>
+                                    Search
+                                </button>
+                            </div>
+
+                            <!-- CLEAR -->
+                            <div class="col-12 col-md-2 mb-3">
+                                <a asp-controller="History" asp-action="Index"
+                                   class="btn btn-secondary filter-action-btn clear-filter-btn w-100">
+                                    <i class="mdi mdi-filter-remove-outline"></i>
+                                    Clear
+                                </a>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE HEADING -->
+    <div class="row mb-4 attendance-heading">
+        <div class="col-12">
+            <h3 class="font-weight-bold">Attendance History</h3>
+
+            <p class="text-muted mb-0">
+                @if (Model.Filter.FromDate.HasValue && Model.Filter.ToDate.HasValue)
+                {
+                    <span>
+                        Showing attendance records from
+                        <strong>@Model.Filter.FromDate.Value.ToString("dd MMM yyyy")</strong>
+                        to
+                        <strong>@Model.Filter.ToDate.Value.ToString("dd MMM yyyy")</strong>.
+                    </span>
+                }
+                else if (Model.Filter.FromDate.HasValue)
+                {
+                    <span>
+                        Showing attendance records from
+                        <strong>@Model.Filter.FromDate.Value.ToString("dd MMM yyyy")</strong>.
+                    </span>
+                }
+                else if (Model.Filter.ToDate.HasValue)
+                {
+                    <span>
+                        Showing attendance records up to
+                        <strong>@Model.Filter.ToDate.Value.ToString("dd MMM yyyy")</strong>.
+                    </span>
+                }
+                else
+                {
+                    <span>Showing attendance records for the current month.</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE HISTORY TABLE -->
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table id="attendanceHistoryTable" class="table text-nowrap attendance-history-table">
+
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>EMPLOYEE NAME</th>
+                                    <th>DATE</th>
+                                    <th>LOGIN TIME</th>
+                                    <th>IP ADDRESS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.Attendances.Any())
+                                {
+                                    int serialNumber = 1;
+
+                                    foreach (var attendance in Model.Attendances)
+                                    {
+                                        <tr>
+                                            <td>@serialNumber</td>
+
+                                            <td class="employee-name">
+                                                @attendance.EmployeeName
+                                            </td>
+
+                                            <td>
+                                                @attendance.AttendanceDate.ToString("dd MMM yyyy")
+                                            </td>
+
+                                            <td>
+                                                @attendance.LoginTime.ToString("hh:mm:ss tt")
+                                            </td>
+
+                                            <td>
+                                                @(attendance.IPAddress ?? "-")
+                                            </td>
+                                        </tr>
+
+                                        serialNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            No attendance records to display.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
