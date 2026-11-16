@@ -7,6 +7,8 @@ const attendanceTables = [
     document.getElementById('recentAttendanceTable'),
     document.getElementById('attendanceReportTable'),
     document.getElementById('attendanceHistoryTable'),
+    document.getElementById('employeeTable'),
+    
 ].filter(table => table !== null);
 
 // Filter employees in the available tables.

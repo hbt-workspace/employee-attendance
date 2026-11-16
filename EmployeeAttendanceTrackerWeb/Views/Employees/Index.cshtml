@@ -1,0 +1,89 @@
+@model List<EmployeeAttendanceTrackerWeb.Models.ViewModels.EmployeeViewModel>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
+
+<div class="employee-page">
+
+    <!-- PAGE HEADING -->
+    <div class="row mb-4 employee-heading">
+        <div class="col-12">
+            <h3 class="font-weight-bold">Employees</h3>
+            <p class="text-muted mb-0">
+                List of all registered employees.
+            </p>
+        </div>
+    </div>
+
+    <!-- EMPLOYEE TABLE -->
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <div class="employee-card-header">
+                        <div>
+                            <h4 class="card-title mb-1">Employee Records</h4>
+                            <p class="text-muted small mb-0">
+                                Overview of employee names and their current status
+                            </p>
+                        </div>
+
+                        <span class="badge badge-primary">Total: @(Model?.Count ?? 0)</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="employeeTable" class="table text-nowrap employee-table">
+
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>EMPLOYEE NAME</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int serialNumber = 1;
+
+                                    foreach (var employee in Model)
+                                    {
+                                        <tr>
+                                            <td>@serialNumber</td>
+                                            <td class="employee-name">@employee.EmployeeName</td>
+                                            <td>
+                                                @if (employee.IsActive)
+                                                {
+                                                    <span class="badge badge-success">Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">Inactive</span>
+                                                }
+                                            </td>
+                                        </tr>
+
+                                        serialNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">
+                                            No employees to display.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

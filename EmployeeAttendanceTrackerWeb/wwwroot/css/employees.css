@@ -1,0 +1,164 @@
+/* EMPLOYEE PAGE */
+.employee-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.employee-page .row {
+    min-width: 0;
+}
+
+.employee-page .card-body {
+    min-width: 0;
+}
+
+/* PAGE HEADING */
+.employee-page .employee-heading {
+    margin-bottom: 20px;
+}
+
+.employee-page .employee-heading h3 {
+    color: #f1f5f9;
+    font-size: 22px;
+}
+
+.employee-page .employee-heading p {
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* EMPLOYEE CARD HEADER */
+.employee-page .employee-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.employee-page .employee-card-header .card-title {
+    color: #e2e8f0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.employee-page .employee-card-header p {
+    font-size: 12px;
+}
+
+/* EMPLOYEE TABLE */
+.employee-page .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.employee-page .employee-table {
+    width: 100%;
+    min-width: 450px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+}
+
+.employee-page .employee-table thead th {
+    background-color: rgba(255, 255, 255, 0.045);
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 16px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    white-space: nowrap;
+}
+
+.employee-page .employee-table tbody td {
+    padding: 17px 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    color: #9caed0;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.employee-page .employee-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.employee-page .employee-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.employee-page .employee-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.035);
+}
+
+.employee-page .employee-table .employee-name {
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+/* TABLET */
+@media (max-width: 991.98px) {
+    .employee-page {
+        overflow-x: hidden;
+    }
+
+    .employee-page .card-body {
+        padding: 20px;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 767.98px) {
+    .employee-page {
+        padding-top: 75px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .employee-page .employee-heading {
+        margin-bottom: 18px;
+    }
+
+    .employee-page .employee-heading h3 {
+        font-size: 21px;
+        line-height: 1.4;
+    }
+
+    .employee-page .employee-heading p {
+        font-size: 12px;
+    }
+
+    .employee-page .employee-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .employee-page .card-body {
+        padding: 18px;
+    }
+
+    .employee-page .employee-table {
+        min-width: 450px;
+    }
+
+    .employee-page .employee-table thead th,
+    .employee-page .employee-table tbody td {
+        padding: 13px 12px;
+        font-size: 12px;
+    }
+}
+
+/* VERY SMALL MOBILE */
+@media (max-width: 360px) {
+    .employee-page .card-body {
+        padding: 14px;
+    }
+
+    .employee-page .employee-heading h3 {
+        font-size: 19px;
+    }
+}
