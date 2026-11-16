@@ -1,3 +1,8 @@
+using EmployeeAttendanceService.Data;
+using EmployeeAttendanceService.Helpers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
 namespace EmployeeAttendanceService.Services;
 
 // Attendance Processing Service for the application.
